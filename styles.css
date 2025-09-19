@@ -2,6 +2,8 @@
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    font-size: 22px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
 body {
@@ -24,6 +26,10 @@ body {
 .screen {
     background-color: #CCCCCC;
     height: 20%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    overflow-y: auto;
 }
 
 .button-container {
@@ -40,8 +46,6 @@ body {
 
 button{
     flex:1;
-    font-size: 22px;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     cursor: pointer;
     border-radius: 6px;
     background-color: #CCCCCC;;
