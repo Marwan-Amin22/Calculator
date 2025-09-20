@@ -24,9 +24,8 @@ A simple calculator built with HTML, CSS, and JavaScript. Supports basic arithme
 - Clean UI
 
 
-🔮 Future Ideas (optional)
+🔮 Future Ideas 
 
 - Add keyboard support
 
 - Support parentheses 
-
