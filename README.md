@@ -1,29 +1,29 @@
 # Calculator
 
-A simple calculator built with HTML, CSS, and JavaScript. Supports basic arithmetic operations (addition, subtraction, multiplication, division), clearing, deleting, and proper rounding to avoid floating-point errors.
+A simple calculator built with HTML, CSS, and JavaScript. Supports basic arithmetic operations (addition, subtraction, multiplication, division, powering), clearing, deleting, and floating-point numbers (up to 10 decimals).
 
 📸 Preview
-![Calculator Screenshot](./screenshot.png)
+![Calculator Screenshot](./calculator.png)
 
 🚀 Usage
 
-Clone the repo or download the files
+- Clone the repo or download the files
 
-Open index.html in your browser
+- Open index.html in your browser
 
 ✨ Features
 
-Basic math operations
+- Basic math operations
 
-Clear & delete buttons
+- Clear & delete buttons
 
-Handles floating-point precision 
+- Handles floating-point precision 
 
-Clean UI
+- Clean UI
 
 🔮 Future Ideas (optional)
 
-Add keyboard support
+- Add keyboard support
 
-Support parentheses 
+- Support parentheses 
 
