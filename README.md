@@ -3,7 +3,8 @@
 A simple calculator built with HTML, CSS, and JavaScript. Supports basic arithmetic operations (addition, subtraction, multiplication, division, powering), clearing, deleting, and floating-point numbers (up to 10 decimals).
 
 📸 Preview
-![Calculator Screenshot](images/calculator.png)
+
+<img src="images/calculator.png" alt="Calculator Screenshot" height="400">  
 
 
 🚀 Usage
