@@ -18,7 +18,10 @@ function removeFromArray(str) {
     }
     else if (str === "delete") {
 
-        if (objArr[objArr.length - 1].id === "number") {
+        if (newText)
+            objArr = [];
+
+        else if (objArr[objArr.length - 1].id === "number") {
 
             if (objArr[objArr.length - 1].content.length === 1)
                 objArr.pop();
@@ -38,9 +41,8 @@ function removeFromArray(str) {
 
 function addNumToArray(str) {
 
-    if(newText)
-    {
-        objArr= [];
+    if (newText) {
+        objArr = [];
         newText = false;
     }
 
@@ -48,8 +50,7 @@ function addNumToArray(str) {
 
         objArr.push({
             content: str,
-            id: "number",
-            sign: "positive"
+            id: "number"
         });
 
     }
@@ -63,8 +64,7 @@ function addNumToArray(str) {
 
             objArr.push({
                 content: str,
-                id: "number",
-                sign: "positive"
+                id: "number"
             });
         }
     }
@@ -72,8 +72,7 @@ function addNumToArray(str) {
 
 function addOppToArray(str) {
 
-    if(newText)
-    {
+    if (newText) {
         newText = false;
     }
     switch (str) {
@@ -99,7 +98,7 @@ function addOppToArray(str) {
             }); break;
         case "power":
             objArr.push({
-                content: "power",
+                content: "^",
                 id: "operation"
             }); break;
         default: break;
@@ -109,7 +108,7 @@ function addOppToArray(str) {
 function arrayToScreen() {
 
     screen.textContent = objArr.reduce((total, item) => total + item.content, "");
-    if(objArr[0]&&objArr[0].id==="error")
+    if (objArr[0] && objArr[0].id === "error")
         objArr.pop();
 }
 
@@ -118,7 +117,7 @@ function checkSyntax() {
     if (objArr.length === 0) {
         return false;
     }
-    if (objArr[0].id === "operation" && (objArr[0].content !== "+" || objArr[0].content !== "-")) {
+    if (objArr[0].id === "operation" && (objArr[0].content === "÷" || objArr[0].content === "×" || objArr[0].content === "^")) {
         return false;
     }
     if (objArr[objArr.length - 1].id === "operation") {
@@ -126,25 +125,27 @@ function checkSyntax() {
     }
 
 
-
     return true;
 }
 
 function cleanUpOperations() {
 
+    if (!checkSyntax()) {
+        return false;
+    }
 
     for (let i = 0; i < objArr.length;) {
 
         if (objArr[i].id === "operation") {
 
-            if (objArr[i + 1].id === "number") {
+            if (objArr[i + 1] && objArr[i + 1].id === "number") {
                 i++;
                 continue;
             }
-            else if (objArr[i + 1].id === "operation" && (objArr[i + 1].content === "×" || objArr[i + 1].content === "÷")) {
+            else if (objArr[i + 1] && objArr[i + 1].id === "operation" && (objArr[i + 1].content === "×" || objArr[i + 1].content === "÷" || objArr[i + 1].content === "^")) {
                 return false;
             }
-            else if (objArr[i].content === "+" || objArr[i].content === "-") {
+            else if (objArr[i].content === "+" || objArr[i].content === "-" ) {
 
                 if (objArr[i].content === objArr[i + 1].content) {
                     // ++ or --
@@ -165,13 +166,13 @@ function cleanUpOperations() {
                 }
 
             }
-            else if (objArr[i].content === "×" || objArr[i].content === "÷") {
+            else if (objArr[i].content === "×" || objArr[i].content === "÷" || objArr[i].content === "^") {
 
-                if (objArr[i + 1].content === "+") {
+                if (objArr[i + 1] && objArr[i + 1].content === "+") {
 
                     objArr.splice(i + 1, 1);
                 }
-                else if (objArr[i + 1].content === "-") {
+                else if (objArr[i + 1] && objArr[i + 1].content === "-") {
                     i++;
                 }
             }
@@ -182,6 +183,17 @@ function cleanUpOperations() {
     }
 
 
+    if (objArr[0].content === "+") {
+        objArr.splice(0, 1);
+    }
+    else if (objArr[0].content === "-") {
+        if (objArr.length > 1) {
+            objArr.splice(0, 1);
+            objArr[0].content = String(-Number(objArr[0].content));
+
+        }
+
+    }
 
 
     return true;
@@ -191,12 +203,14 @@ function cleanUpOperations() {
 function doOperation(lhs, rhs, type) {
 
 
-    lhs = lhs.sign === "negative" ? -Number(lhs.content) : Number(lhs.content);
-    rhs = rhs.sign === "negative" ? -Number(rhs.content) : Number(rhs.content);
-    if (rhs === 0 && type === "÷") {
+
+    lhs = Number(lhs.content);
+    rhs = Number(rhs.content);
+
+    if (rhs === 0 && type === "÷" || lhs === 0 && rhs === 0 && type === "^") {
         objArr = [];
         return {
-            content: "Division by zero",
+            content: "Math Error",
             id: "error"
         };
     }
@@ -206,51 +220,133 @@ function doOperation(lhs, rhs, type) {
         case "-": ans = lhs - rhs; break;
         case "×": ans = lhs * rhs; break;
         case "÷": ans = lhs / rhs; break;
+        case "^": ans = lhs ** rhs; break;
         default: break;
     }
     return {
         content: String(ans),
-        id: "number",
-        sign: "positive"
+        id: "number"
     };
 }
+function loopForPow() {
 
-function Calculate() {
+    //  loop 1 for ^
+    for (let i = 0; i < objArr.length && objArr[i].id !== "error" && objArr.length > 1;) {
 
 
-    if (checkSyntax() && cleanUpOperations()) {
 
-        if (objArr[0].content === "+") {
-            objArr.splice(0, 1);
-        }
-        else if (objArr[0].content === "-") {
-            if (objArr.length !== 1)
-                objArr[1].sign = "negative";
-        }
+        if (objArr[i].id === "number" && i !== objArr.length - 1) {
 
-        if(objArr.length <2)
-            return;
+            let lhs, rhs, type;
+            lhs = objArr[i];
+            type = objArr[i + 1].content;
+            if (type === "^") {
 
-        for (let i = 0; i < objArr.length && objArr[i].id !== "error" && objArr.length>1;) {
-
-            if (objArr[i].id === "number") {
-                let lhs, rhs, type;
-                lhs = objArr[i];
-                type = objArr[i + 1].content;
                 if (objArr[i + 2].id === "number") { }
                 else if (objArr[i + 2].id === "operation" && objArr[i + 2].content === "-") {
                     objArr.splice(i + 2, 1);
-                    objArr[i + 2].sign = "negative";//next obj now 
+
+                    objArr[i + 2].content = String(-Number(objArr[i + 2].content));//next obj now 
                 }
                 rhs = objArr[i + 2];
 
                 const ansObj = doOperation(lhs, rhs, type);
                 objArr.splice(i, 3);
-                objArr.splice(i, 0, ansObj)
-
+                objArr.splice(i, 0, ansObj);
+            }
+            else {
+                i++;
             }
 
         }
+        else {
+            i++;
+        }
+    }
+}
+function loopForMulDiv() {
+
+    //  loop 2 for × and ÷
+    for (let i = 0; i < objArr.length && objArr[i].id !== "error" && objArr.length > 1;) {
+
+
+
+        if (objArr[i].id === "number" && i !== objArr.length - 1) {
+
+            let lhs, rhs, type;
+            lhs = objArr[i];
+            type = objArr[i + 1].content;
+            if (type === "×" || type === "÷") {
+
+                if (objArr[i + 2].id === "number") { }
+                else if (objArr[i + 2].id === "operation" && objArr[i + 2].content === "-") {
+                    objArr.splice(i + 2, 1);
+
+                    objArr[i + 2].content = String(-Number(objArr[i + 2].content));//next obj now 
+                }
+                rhs = objArr[i + 2];
+
+                const ansObj = doOperation(lhs, rhs, type);
+                objArr.splice(i, 3);
+                objArr.splice(i, 0, ansObj);
+            }
+            else {
+                i++;
+            }
+
+        }
+        else {
+            i++;
+        }
+    }
+}
+function loopForAddSub() {
+
+    //  loop 3 for + and -
+    for (let i = 0; i < objArr.length && objArr[i].id !== "error" && objArr.length > 1;) {
+
+
+        if (objArr[i].id === "number") {
+            let lhs, rhs, type;
+            lhs = objArr[i];
+            type = objArr[i + 1].content;
+            if (objArr[i + 2].id === "number") { }
+            else if (objArr[i + 2].id === "operation" && objArr[i + 2].content === "-") {
+                objArr.splice(i + 2, 1);
+
+                objArr[i + 2].content = String(-Number(objArr[i + 2].content));//next obj now 
+            }
+            rhs = objArr[i + 2];
+
+            const ansObj = doOperation(lhs, rhs, type);
+            objArr.splice(i, 3);
+            objArr.splice(i, 0, ansObj);
+        }
+        else {
+            i++;
+        }
+    }
+}
+function Calculate() {
+
+
+
+    if (cleanUpOperations()) {
+
+        if (objArr.length === 0)
+        {
+            return
+        }
+        if (objArr.length === 1)
+        {
+            // have to be number
+            objArr[0].content = String(Number(objArr[0].content));
+            return
+        }
+
+        loopForPow();
+        loopForMulDiv();
+        loopForAddSub();
 
     }
     else {
@@ -263,39 +359,39 @@ function Calculate() {
 }
 
 
+function makeDecimal() {
 
-    btn.forEach((item) => {
-
-        item.addEventListener("click", (event) => {
-
-            const b = event.currentTarget;
-            if (b.className === "number") {
-                addNumToArray(event.target.id);
-            }
-            else if (b.className === "operation") {
-                addOppToArray(event.target.id);
-            }
-            else if (b.id === "clear" || event.target.id === "delete") {
-                removeFromArray(event.target.id);
-            }
-            else if (b.id === "dot") {
-
-            }
-            else if (b.id === "equal") {
-                Calculate();
-                newText = true;
-            }
-
-            arrayToScreen();
-            console.log(objArr.length);
+}
 
 
-        });
+
+btn.forEach((item) => {
+
+    item.addEventListener("click", (event) => {
+
+        const b = event.currentTarget;
+        if (b.className === "number") {
+            addNumToArray(event.target.id);
+        }
+        else if (b.className === "operation") {
+            addOppToArray(event.target.id);
+        }
+        else if (b.id === "clear" || event.target.id === "delete") {
+            removeFromArray(event.target.id);
+        }
+        else if (b.id === ".") {
+            makeDecimal();
+        }
+        else if (b.id === "equal") {
+            Calculate();
+            newText = true;
+        }
+
+        arrayToScreen();
+
+
     });
-
-
-
-
+});
 
 
 
