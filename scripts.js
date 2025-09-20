@@ -107,7 +107,7 @@ function addOppToArray(str) {
 
 function arrayToScreen() {
 
-    screen.textContent = objArr.reduce((total, item) => total + item.content, "");
+    screen.textContent = objArr.reduce((total, item) => total + item.content , "");
     if (objArr[0] && objArr[0].id === "error")
         objArr.pop();
 }
@@ -223,6 +223,7 @@ function doOperation(lhs, rhs, type) {
         case "^": ans = lhs ** rhs; break;
         default: break;
     }
+    ans = Number(ans.toFixed(10));
     return {
         content: String(ans),
         id: "number"
@@ -360,7 +361,21 @@ function Calculate() {
 
 
 function makeDecimal() {
+    if(objArr.length === 0){
+        addNumToArray("0.");
+    }
+    else if(objArr[objArr.length-1].id === "operation"){
+        addNumToArray("0.");
+    }
+    else if(objArr[objArr.length-1].id === "number"){
 
+        if(objArr[objArr.length-1].content.includes(".")){
+            return;
+        }
+        else{
+            objArr[objArr.length-1].content +=".";
+        }
+    }
 }
 
 
@@ -392,7 +407,4 @@ btn.forEach((item) => {
 
     });
 });
-
-
-
 
