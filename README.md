@@ -4,7 +4,7 @@ A simple calculator built with HTML, CSS, and JavaScript. Supports basic arithme
 
 📸 Preview
 
-<img src="images/calculator.png" alt="Calculator Screenshot" height="400">  
+<img src="images/calculator.png" alt="Calculator Screenshot" height="400" text-align="center">  
 
 
 🚀 Usage
